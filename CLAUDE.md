@@ -93,7 +93,7 @@ These exceptions must not change product behavior, database schema, API contract
 **Follow the full workflow. Skip nothing for meaningful work.**
 
 Before starting any work, verify that Spec Kit is installed in the project. If it is not installed, stop and notify the user before proceeding.
-)https://github.com/github/spec-kit.git(
+https://github.com/github/spec-kit.git
 
 Spec Kit must always be kept on the latest available update. Before starting any work that depends on Spec Kit, run `specify self upgrade` first. If the update cannot be verified or completed, stop and notify the user before proceeding.
 
