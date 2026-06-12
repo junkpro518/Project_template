@@ -115,7 +115,16 @@ Do not skip or reorder any phase for new features, major changes, or unclear wor
 
 If the user asks to implement immediately but the required spec artifacts are missing, stop and create or request the missing spec artifacts first.
 
-## 7. Instruction Sync: CLAUDE.md ↔ AGENTS.md
+## 7. Claude Code Plugins
+
+After the project structure, architecture, and required tools are defined, Claude Code must review the official Claude plugins directory:
+https://github.com/anthropics/claude-plugins-official
+
+Claude Code must only install plugins that directly match the approved project tools and workflow. Do not install plugins speculatively.
+
+Before installing, updating, or using a plugin, verify that it is trusted, relevant, and documented in the project plan.
+
+## 8. Instruction Sync: CLAUDE.md ↔ AGENTS.md
 
 `CLAUDE.md` and `AGENTS.md` must stay aligned on core project rules.
 
