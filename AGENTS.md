@@ -97,7 +97,7 @@ https://github.com/github/spec-kit.git
 
 Spec Kit must always be kept on the latest available update. Before starting any work that depends on Spec Kit, run `specify self upgrade` first. If the update cannot be verified or completed, stop and notify the user before proceeding.
 
-Use the Spec Kit commands available in the project.
+Use the Spec Kit skills available in the project.
 
 Start by reviewing:
 1. Constitution
@@ -105,13 +105,27 @@ Start by reviewing:
 3. Current task scope
 4. Existing implementation
 
-Then execute the workflow in order:
-1. **Clarify** — resolve ambiguities before planning
-2. **Plan** — define the technical approach
-3. **Tasks** — break work into verifiable steps
-4. **Implement** — write code only after the previous steps are clear
+Before any feature work, the project must have:
+- **Constitution** — the project principles → `/speckit-constitution`. If `.specify/memory/constitution.md` is still the unfilled template, stop and create it first.
+- **Converge** — when entering a codebase that already has code but no specs, run `/speckit-converge` once so the existing work is captured as tasks before anything new is planned.
 
-Do not skip or reorder any phase for new features, major changes, or unclear work.
+Then execute the workflow in order:
+1. **Specify** — create the feature spec → `/speckit-specify`
+2. **Clarify** — resolve ambiguities before planning → `/speckit-clarify`
+3. **Plan** — define the technical approach → `/speckit-plan`
+4. **Agent Context Update** — sync the chosen stack into the agent context file, immediately after planning → `/speckit-agent-context-update`
+5. **Checklist** — validate that requirements are complete, clear, and consistent → `/speckit-checklist`
+6. **Tasks** — break work into verifiable steps → `/speckit-tasks`
+7. **Tasks to Issues** — publish the task breakdown as GitHub issues, immediately after tasks → `/speckit-taskstoissues`
+8. **Analyze** — cross-artifact consistency check before writing code → `/speckit-analyze`
+9. **Implement** — write code only after the previous steps are clear → `/speckit-implement`
+10. **Converge** — assess the code against the spec and append any unbuilt work as tasks → `/speckit-converge`
+
+Every step is mandatory. No step may be skipped, reordered, or merged into another for new features, major changes, or unclear work. There are no optional steps.
+
+A step that produces no findings still counts as executed. When clarify finds no ambiguities, or analyze finds no inconsistencies, record that result and move to the next step — running a step and finding nothing is not the same as skipping it.
+
+Converge may append new tasks. When it does, return to step 9, implement them, then converge again. The feature is complete when converge finds nothing remaining.
 
 If the user asks to implement immediately but the required spec artifacts are missing, stop and create or request the missing spec artifacts first.
 
