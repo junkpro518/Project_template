@@ -156,6 +156,23 @@ Tool-specific instructions may differ when necessary.
 
 When changing one file, review the other file and update any shared rules so both agents follow the same project standards.
 
+## 9. Build on What Exists
+
+**Reuse before reinventing. Study prior art before designing.**
+
+- Study how established products solve the problem before designing a solution. Adopt their proven patterns and conventions rather than inventing an approach from scratch.
+- Prefer established, well-maintained libraries when they reduce overall complexity or improve reliability. Do not reimplement common functionality without a clear reason.
+- Lean on the dependencies already in the project before writing your own implementation or adding packages. Do not assume a library lacks a capability without checking its documentation and types.
+
+## 10. Incremental Delivery, Durable Architecture
+
+**Ship something that works, then grow it. Decide the shape for the long term.**
+
+- Grow the system in layers. Start from the smallest version that works end to end, and add each new capability on top of a product that already works. Never trade a working product for unfinished complexity.
+- Make architectural decisions for the long term. Do not accept a stopgap that only works for now and is meant to be replaced later.
+
+This does not override Section 2. Simplicity governs how a component is implemented; long-term thinking governs the boundaries, contracts, and data shapes between components.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
