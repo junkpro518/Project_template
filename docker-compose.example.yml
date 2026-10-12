@@ -1,0 +1,31 @@
+# Starting point for deploying a project on this server (behind traefik).
+# Lessons baked in (server audit 2026-10-11):
+#   - every container has a memory limit
+#   - a public site gets a login in front of it (basicAuth), or stays on Tailscale only
+#   - no ports published to the internet; traefik is the only public door
+#   - secrets come from .env (chmod 600), never from the compose file
+services:
+  app:
+    build: .
+    container_name: PROJECT
+    restart: unless-stopped
+    env_file: .env
+    mem_limit: 512m
+    memswap_limit: 1g
+    networks: [proxy]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.PROJECT.rule=Host(`PROJECT.mohammed518.com`)"
+      - "traefik.http.routers.PROJECT.entrypoints=websecure"
+      - "traefik.http.routers.PROJECT.tls.certresolver=myresolver"
+      # login in front of the site — remove only if the app has its own login:
+      #   htpasswd -nbB user 'password'  → put the result below (double every $)
+      - "traefik.http.middlewares.PROJECT-auth.basicauth.users=user:$$2y$$..."
+      - "traefik.http.routers.PROJECT.middlewares=PROJECT-auth"
+      - "traefik.http.services.PROJECT.loadbalancer.server.port=3000"
+    logging:
+      options: { max-size: "10m", max-file: "3" }
+
+networks:
+  proxy:
+    external: true

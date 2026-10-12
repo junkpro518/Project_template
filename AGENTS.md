@@ -176,3 +176,7 @@ This does not override Section 2. Simplicity governs how a component is implemen
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+## Shared toolbox (server)
+
+Before adding skills or tools to this project, read `TOOLBOX.md`: pick only what this project needs from `~/toolbox` (`kit search`, `kit add`). Deploy from `docker-compose.example.yml` — memory limit, login in front of public sites, secrets only in `.env`.

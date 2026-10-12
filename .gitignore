@@ -1,1 +1,11 @@
 .DS_Store
+# secrets never go to git — copy .env.example to .env (chmod 600)
+.env
+.env.*
+!.env.example
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.next/
+dist/
