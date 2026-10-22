@@ -127,6 +127,13 @@ A step that produces no findings still counts as executed. When clarify finds no
 
 Converge may append new tasks. When it does, return to step 9, implement them, then converge again. The feature is complete when converge finds nothing remaining.
 
+### Security review after every coding phase
+
+«تُستخدم بعد كل مرحلة من مراحل كتابة الكود» — the `security-audit` skill (`.claude/skills/security-audit`, from Cloudflare) runs after every phase that writes code: each `/speckit-implement` run and each implement → converge loop.
+- Use its **guidance mode**: a focused review of the code that phase added or changed — trust boundaries, input handling, auth, secrets, data isolation. Fix confirmed findings before running converge; record "no findings" when there are none (the step still counts as executed).
+- Run the **complete six-phase audit** only when the user asks for it or before a release: it launches many agents and costs much more.
+- Follow the skill's execution-safety rules as written: never probe deployed services, production data or paid APIs; execute target code only in a sandbox.
+
 If the user asks to implement immediately but the required spec artifacts are missing, stop and create or request the missing spec artifacts first.
 
 ## 7. Claude Code Plugins
