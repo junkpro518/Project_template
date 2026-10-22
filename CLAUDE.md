@@ -134,6 +134,11 @@ Converge may append new tasks. When it does, return to step 9, implement them, t
 - Run the **complete six-phase audit** only when the user asks for it or before a release: it launches many agents and costs much more.
 - Follow the skill's execution-safety rules as written: never probe deployed services, production data or paid APIs; execute target code only in a sandbox.
 
+**Note on `security-audit`:**
+- Run the skill with a model that accepts defensive code review and does not refuse the request. Examples mentioned by Ahmed Nagdy in his video: GLM 5.3 and Kimi.
+- If the current model refuses, do not bypass or work around the refusal. Switch the model for this task only, and tell the user.
+- Review only the user's own code.
+
 If the user asks to implement immediately but the required spec artifacts are missing, stop and create or request the missing spec artifacts first.
 
 ## 7. Claude Code Plugins
