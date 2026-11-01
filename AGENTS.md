@@ -116,7 +116,7 @@ Then execute the workflow in order:
 4. **Agent Context Update** — sync the chosen stack into the agent context file, immediately after planning → `/speckit-agent-context-update`
 5. **Checklist** — validate that requirements are complete, clear, and consistent → `/speckit-checklist`
 6. **Tasks** — break work into verifiable steps → `/speckit-tasks`
-7. **Tasks to Issues** — publish the task breakdown as GitHub issues, immediately after tasks → `/speckit-taskstoissues`
+7. **Tasks to Issues** — publish the task breakdown as GitHub issues, immediately after tasks → `/speckit-github-taskstoissues` (the `github` extension; the core `/speckit-taskstoissues` is deprecated)
 8. **Analyze** — cross-artifact consistency check before writing code → `/speckit-analyze`
 9. **Implement** — write code only after the previous steps are clear → `/speckit-implement`
 10. **Converge** — assess the code against the spec and append any unbuilt work as tasks → `/speckit-converge`
@@ -140,6 +140,16 @@ Converge may append new tasks. When it does, return to step 9, implement them, t
 - Review only the user's own code.
 
 If the user asks to implement immediately but the required spec artifacts are missing, stop and create or request the missing spec artifacts first.
+
+### Always guide the user through the workflow
+
+The user is not a developer and reads mostly from a phone. Throughout the work, tell the user in simple Arabic:
+- **Where we are:** the current step out of the 10 (e.g. «الخطوة 3 من 10: Plan») and what was just completed.
+- **What this step is for** and what it produces, in one or two short sentences.
+- **How to use it:** the exact command to run next (e.g. `/speckit-clarify`), what to give it, and what the user needs to decide or approve.
+- **What comes next** after this step.
+
+Do this at the start and end of every step, and whenever the user seems lost. The same applies to the extension commands when used: `assess` (idea evaluation before specify) and `bug` (assess → fix → test). Never assume the user remembers the steps or the command names.
 
 ## 7. Claude Code Plugins
 
