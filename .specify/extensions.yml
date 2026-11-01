@@ -1,5 +1,6 @@
 installed:
 - agent-context
+- assess
 - git
 - github
 settings:
