@@ -115,11 +115,11 @@ Then execute the workflow in order:
 3. **Plan** — define the technical approach → `/speckit-plan`
 4. **Agent Context Update** — sync the chosen stack into the agent context file, immediately after planning → `/speckit-agent-context-update`
 5. **Checklist** — validate that requirements are complete, clear, and consistent → `/speckit-checklist`
-6. **Tasks** — break work into verifiable steps → `/speckit-tasks`
+6. **Tasks** — break work into verifiable steps → `/speckit-tasks`. For a feature with a UI, include one e2e test task per user flow (Section 11).
 7. **Tasks to Issues** — publish the task breakdown as GitHub issues, immediately after tasks → `/speckit-github-taskstoissues` (the `github` extension; the core `/speckit-taskstoissues` is deprecated)
 8. **Analyze** — cross-artifact consistency check before writing code → `/speckit-analyze`
-9. **Implement** — write code only after the previous steps are clear → `/speckit-implement`
-10. **Converge** — assess the code against the spec and append any unbuilt work as tasks → `/speckit-converge`
+9. **Implement** — write code only after the previous steps are clear → `/speckit-implement`. For a feature with a UI, run its e2e tests after the security review (Section 11).
+10. **Converge** — assess the code against the spec and append any unbuilt work as tasks → `/speckit-converge`. A feature with a UI is not complete while its e2e tests are missing or failing (Section 11).
 
 Every step is mandatory. No step may be skipped, reordered, or merged into another for new features, major changes, or unclear work. There are no optional steps.
 
@@ -149,7 +149,7 @@ The user is not a developer and reads mostly from a phone. Throughout the work, 
 - **How to use it:** the exact command to run next (e.g. `/speckit-clarify`), what to give it, and what the user needs to decide or approve.
 - **What comes next** after this step.
 
-Do this at the start and end of every step, and whenever the user seems lost. The same applies to the extension commands when used: `assess` (idea evaluation before specify) and `bug` (assess → fix → test). Never assume the user remembers the steps or the command names.
+Do this at the start and end of every step, and whenever the user seems lost. The same applies to the extension commands when used: `assess` (idea evaluation before specify) and `bug` (assess → fix → test), and to the e2e check (Section 11). Never assume the user remembers the steps or the command names.
 
 ## 7. Claude Code Plugins
 
@@ -194,6 +194,21 @@ When changing one file, review the other file and update any shared rules so bot
 - Make architectural decisions for the long term. Do not accept a stopgap that only works for now and is meant to be replaced later.
 
 This does not override Section 2. Simplicity governs how a component is implemented; long-term thinking governs the boundaries, contracts, and data shapes between components.
+
+## 11. End-to-End Testing (e2e)
+
+**A feature with a UI is not done until an end-to-end test proves it works in the running app.**
+
+- **Framework:** [e2e](https://github.com/tester-army/e2e.git): agentic end-to-end testing for web and mobile apps. You describe a goal in natural language, an agent drives the app, and exact assertions check the result. Apache-2.0, still pre-1.0 (APIs can change between minor releases).
+- **Skill:** use the `e2e` skill in `.claude/skills/e2e` (copied from the source repo; the pinned commit and the review note are in its `SOURCE.md`). When the installed package differs from the copy, prefer `npx e2e guide <topic>`.
+- **When it applies:** any feature whose spec has a user-facing flow in a web or mobile UI. Backend-only, CLI, library, documentation, and non-behavioral changes (the Section 5 exceptions) do not need it.
+- **Where it sits in the workflow:** Tasks (step 6) includes one e2e test task per user flow, written from the spec's acceptance scenarios. Implement (step 9) runs those tests after the security review. Converge (step 10) treats a feature with a UI as incomplete while its e2e tests are missing or failing.
+- **Setup:** if the project has no e2e yet, ask the user before adding it, then follow the skill's `setup` reference (`npx e2e init`). Never add another test framework beside it without asking.
+- **Telemetry off:** the e2e CLI sends anonymous usage data. Every project sets `E2E_TELEMETRY_DISABLED=1` (it is already in `.env.example`).
+- **Keys and cost:** agent steps need a model and its authentication, so keys live only in `.env` and in the e2e config's `credentials` and `secrets`, never in test code. Tests without agent steps need no model. Keep the replay cache on while fixing a test; use `--no-cache` only for the final confirming run.
+- **Safety:** run e2e only against the project's own app, locally or on staging, with test accounts. Never against production, real user data, or paid services.
+- **Feedback to the e2e team:** never run `npx e2e feedback` without `--dry-run` first and the user's agreement. Never file an issue on their repository yourself.
+- **Guide the user:** as in Section 6, tell the user in simple Arabic when this check starts and what it found.
 
 ---
 
