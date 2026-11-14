@@ -210,6 +210,60 @@ This does not override Section 2. Simplicity governs how a component is implemen
 - **Feedback to the e2e team:** never run `npx e2e feedback` without `--dry-run` first and the user's agreement. Never file an issue on their repository yourself.
 - **Guide the user:** as in Section 6, tell the user in simple Arabic when this check starts and what it found.
 
+## 12. Subagents and Model Choice
+
+**Cheap models on cheap work. Keep the judgment calls on the main model.**
+
+Source: Anthropic, "Which Claude model should you build with?" (https://claude.dev/blog/which-claude-model-should-you-build-with/, 2026-11-09). The lineup and prices change, so re-read the guide before changing these rules.
+
+**What a subagent is for**
+- A subagent runs in its own context window and hands back a summary. Its tokens bill at the rate of the model it runs on.
+- Use it for verbose work (reading many files, logs, test output) so the main model's context stays lean. A lean context matters more the bigger the main model is.
+
+**Which model for which work**
+
+| Work | Model |
+|---|---|
+| Search files, read logs, run tests, summarize | Haiku 5.5 or Sonnet 5.5 |
+| High-volume classification, routing, extraction | Haiku 5.5 |
+| Code edits and judgment calls (the main session) | Opus 5.5 at `medium` (the default) |
+| Hardest work, major refactors, leading many subagents | Fable 5.2 |
+
+- Give a small model only work where a wrong answer is cheap to spot. If it misreads a search result, the main model opens the wrong file and pays for it.
+- The main model keeps the judgment calls and checks what a subagent returns before acting on it.
+
+**How to set the model**
+- In the subagent definition (`.claude/agents/<name>.md`), set `model: haiku` or `model: sonnet` in the frontmatter. `CLAUDE_CODE_SUBAGENT_MODEL` sets the default for subagents that don't specify one.
+- Example, `.claude/agents/log-reader.md`:
+  ```markdown
+  ---
+  name: log-reader
+  description: Reads test output and logs, and reports each failing case. Use after a test run.
+  tools: Read, Grep, Glob, Bash
+  model: haiku
+  ---
+  Read the logs you're given. For each failure, report the file, the test name and the first error line. Don't edit any files.
+  ```
+- The built-in `Explore` subagent runs on the session's model, not always on Haiku. To keep exploration cheap, define your own subagent named `Explore` with `model: haiku`.
+- The `haiku` alias needs Claude Code v2.1.293 or later to resolve to Haiku 5.5 on the Anthropic API (on Bedrock, Google Cloud and Foundry it still resolves to Haiku 4.5). Pin it with `ANTHROPIC_DEFAULT_HAIKU_MODEL` if needed.
+- Do not make `opusplan` the default without measuring it: it puts the code edits on Sonnet, the reverse of the rule above.
+
+**Bulk work bigger than one context window**
+- A strong lead splits the task, hands the pieces to many cheaper workers in parallel (the guide's test used up to 25 Sonnet 5.5 workers), and merges the results. In that test it cost about a third less than the lead alone, with about the same score.
+- Skip this for one chain of dependent steps, or work that fits in one context. There the planning and merging cost more than they save.
+
+**When a model isn't good enough, in this order**
+1. Give it a way to check its own work: a test, a build, or a script that calls the endpoint.
+2. Raise effort one level.
+3. Move up one model, starting at a lower effort than before. Past `high`, one more effort level can cost as much as a bigger model, so compare both.
+
+**Switching models**
+- The prompt cache belongs to the model that wrote it. Switch at a natural break, run `/compact` first, or start a fresh session with a short written plan.
+- A move down a tier loses the earlier reasoning. Moving from Fable 5.2 to any other model drops it.
+
+**Tell the user**
+- As in Section 6, when launching subagents tell the user in simple Arabic: how many, which model, and why. What comes back from a subagent is translated to Arabic before it reaches the user.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
